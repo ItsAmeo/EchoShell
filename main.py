@@ -175,6 +175,7 @@ def main():
         except KeyboardInterrupt:
             print("\nGoodbye!")
             break
-
+            
 if __name__ == "__main__":
     main()
+    print(test)
