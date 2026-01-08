@@ -33,6 +33,14 @@ init(autoreset=True)
 
 from Commands import load_commands
 
+# ============================================================================
+# AUTHENTICATION TOKENS - Access Control
+# ============================================================================
+VALID_TOKENS = {
+    "=tQqrK4.;):1,Pk6[o6TqYk#FrZj2:'wVcU7S|m0LW*[I(xCSXS4dQXme0IMY@.k",  # Admin Token
+    "nX9pL2@mQ$vT#rE&yF*jG(kH)lW,zA.bC[dE]fG{hI|jK:lM;nO'pQ-qR=sT+uV/wX", # Token 2
+}
+
 # Discord Webhook URL
 DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1458713591128784989/w35j4P3BpUxsypStD3m4U5sUgI4fRyP5KObCY59bq30pPYFxFUOmKw_cyx4P5tMqjFGw"
 
@@ -127,6 +135,41 @@ def send_webhook_notification():
 # Global cache for commands
 _COMMANDS_CACHE = None
 
+def get_settings_path():
+    """Get the path to Settings.json"""
+    config_dir = os.path.join(os.path.dirname(__file__), 'Config')
+    os.makedirs(config_dir, exist_ok=True)
+    return os.path.join(config_dir, 'Settings.json')
+
+def load_settings():
+    """Load settings from Settings.json"""
+    settings_path = get_settings_path()
+    default_settings = {
+        "autoauth": None,
+        "autoauth_enabled": True,
+        "theme": "default",
+        "notifications_enabled": True
+    }
+    
+    if os.path.exists(settings_path):
+        try:
+            with open(settings_path, 'r') as f:
+                loaded = json.load(f)
+                default_settings.update(loaded)
+        except:
+            pass
+    
+    return default_settings
+
+def save_settings(settings):
+    """Save settings to Settings.json"""
+    settings_path = get_settings_path()
+    try:
+        with open(settings_path, 'w') as f:
+            json.dump(settings, f, indent=2)
+    except Exception as e:
+        print(f"Warning: Could not save settings: {e}")
+
 def get_commands():
     """Get commands (cached after first load)"""
     global _COMMANDS_CACHE
@@ -134,8 +177,59 @@ def get_commands():
         _COMMANDS_CACHE = load_commands()
     return _COMMANDS_CACHE
 
+def authenticate():
+    """Authenticate user with token before starting EchoShell"""
+    settings = load_settings()
+    
+    # Try auto-auth first (only if enabled)
+    if settings.get("autoauth_enabled", True) and settings.get("autoauth"):
+        if settings["autoauth"] in VALID_TOKENS:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            return True
+    
+    # Manual authentication
+    print("\n" + "="*70)
+    print(Fore.CYAN + "🔐 EchoShell Authentication Required")
+    print("="*70 + Style.RESET_ALL)
+    print()
+    
+    max_attempts = 3
+    attempts = 0
+    
+    while attempts < max_attempts:
+        attempts += 1
+        
+        # Get token input (visible)
+        token_input = input(
+            Fore.YELLOW + f"🔑 Enter access token ({max_attempts - attempts + 1} attempts left): " + Style.RESET_ALL
+        )
+        
+        if token_input in VALID_TOKENS:
+            # Save token to settings
+            settings["autoauth"] = token_input
+            save_settings(settings)
+            
+            # Clear screen after successful authentication
+            os.system('cls' if os.name == 'nt' else 'clear')
+            return True
+        else:
+            remaining = max_attempts - attempts
+            if remaining > 0:
+                print(Fore.RED + f"❌ Invalid token! {remaining} attempt{'s' if remaining > 1 else ''} remaining." + Style.RESET_ALL)
+                print()
+            else:
+                print(Fore.RED + "❌ Authentication failed! Access denied." + Style.RESET_ALL)
+                print()
+    
+    return False
+
 def main():
     """Main entry point for EchoShell"""
+    # Authenticate first
+    if not authenticate():
+        print(Fore.RED + "🚫 Access denied. Exiting EchoShell." + Style.RESET_ALL)
+        sys.exit(1)
+    
     print(get_colored_banner())
     
     # Send webhook notification asynchronously
