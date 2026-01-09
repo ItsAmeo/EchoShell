@@ -51,23 +51,10 @@ scan       settings  update    autoauth
 - **Standalone Updater** - `update.exe` works independently
 - **Zero-Configuration** - Just run and it works
 
-### 📦 Standalone Executables
-- **EchoShell.exe** - Main application (~50MB)
-- **EchoShell-Update.exe** - Auto-updater (~40MB)
-- **No Python Required** - Runs on any Windows machine
-
 ---
 
 ## 🚀 Quick Start
 
-### Option 1: From Executables (Easiest)
-```powershell
-# Download the latest release
-# Run EchoShell.exe directly - no Python needed!
-.\EchoShell.exe
-```
-
-### Option 2: From Source
 ```powershell
 # Clone the repository
 git clone https://github.com/ItsAmeo/EchoShell.git
@@ -80,31 +67,12 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Option 3: Build Your Own Executables
-```powershell
-# Build exe files
-python build.py
-
-# Then run
-.\dist\EchoShell.exe
-```
-
 ---
 
 ## 📖 Usage
 
 ### First Login
 ```
-======================================================================
-🔐 EchoShell Authentication Required
-======================================================================
-
-🔑 Enter access token (3 attempts left): [YOUR_TOKEN_HERE]
-```
-
-**Available Tokens:**
-- `tQqrK4.;):1,Pk6[o6TqYk#FrZj2:'wVcU7S|m0LW*[I(xCSXS4dQXme0IMY@.k`
-- `nX9pL2@mQ$vT#rE&yF*jG(kH)lW,zA.bC[dE]fG{hI|jK:lM;nO'pQ-qR=sT+uV/wX`
 
 ### Command Examples
 ```bash
@@ -175,31 +143,24 @@ EchoShell> autoauth status      # Check status
 
 ---
 
-## 🏗️ Build System
+## 🏗️ Running the Application
 
 ### Prerequisites
 - Python 3.8+
-- PyInstaller
 - All dependencies in `requirements.txt`
 
-### Building
+### Start EchoShell
 
 ```powershell
-# Automatic setup and build
-python setup.py
+# Install dependencies (first time only)
+pip install -r requirements.txt
 
-# OR manual build
-python build.py
+# Run main application
+python main.py
 
-# Test the build
-python test_build.py
+# Run auto-updater
+python update.py
 ```
-
-### Output
-- `dist/EchoShell.exe` - Main application (~50MB)
-- `dist/EchoShell-Update.exe` - Auto-updater (~40MB)
-
-Both executables run in **console mode** and stay open for interaction.
 
 ---
 
@@ -209,22 +170,41 @@ Both executables run in **console mode** and stay open for interaction.
 EchoShell/
 ├── main.py                 # Entry point + CLI interface
 ├── update.py               # Auto-updater (standalone)
-├── ai.py                   # Advanced AI assistant
-├── build.py                # Build system
-├── setup.py                # Setup script
-├── test_build.py          # Build test
-├── build.bat              # Build batch script
-├── requirements.txt       # Python dependencies
+├── requirements.txt        # Python dependencies
+├── README.md              # Documentation
 │
 ├── Commands/              # Command modules
-│   ├── __init__.py
+│   ├── __init__.py        # Command loader + base class
 │   ├── scan.py           # Malware scanner with PyQt5 GUI
 │   ├── autoauth.py       # Auth manager
 │   ├── update.py         # Update command
-│   └── [23 other commands]
+│   ├── sysinfo.py        # System info
+│   ├── whoami.py         # Current user
+│   ├── ls.py             # List files
+│   ├── cd.py             # Change directory
+│   ├── pwd.py            # Working directory
+│   ├── mkdir.py          # Create directory
+│   ├── rm.py             # Remove file/folder
+│   ├── copy.py           # Copy file
+│   ├── tree.py           # Directory tree
+│   ├── ping.py           # Test connection
+│   ├── curl.py           # HTTP request
+│   ├── dns.py            # DNS lookup
+│   ├── calc.py           # Calculator
+│   ├── clear.py          # Clear screen
+│   ├── echo.py           # Print text
+│   ├── search.py         # Find files
+│   ├── hash.py           # File hash
+│   ├── date_cmd.py       # Date/time
+│   ├── ip.py             # Network info
+│   ├── logs.py           # View logs
+│   ├── stats.py          # System stats
+│   ├── settings.py       # Settings manager
+│   ├── exit.py           # Exit command
+│   └── __pycache__/      # Cache folder
 │
 ├── Config/               # Configuration
-│   └── Settings.json    # User settings
+│   └── Settings.json    # User settings & tokens
 │
 └── 1-Output/            # Generated files
     ├── logs/
@@ -236,15 +216,16 @@ EchoShell/
 
 ## 🔌 Dependencies
 
+All dependencies are listed in `requirements.txt`:
+
 ```
-requests>=2.28.0      # HTTP requests
-colorama>=0.4.6       # Terminal colors
-psutil>=5.9.0         # System info
-PyQt5>=5.15.0         # GUI components
+requests       # HTTP requests for GitHub API & Discord webhooks
+colorama       # Terminal colors & styling
+psutil         # System information & monitoring
+PyQt5          # GUI components for scan results
 ```
 
-**Optional for developers:**
-- `pyinstaller>=5.0.0` - For building executables
+Install with: `pip install -r requirements.txt`
 
 ---
 
@@ -253,7 +234,8 @@ PyQt5>=5.15.0         # GUI components
 - **Startup Time:** <500ms (with auto-auth)
 - **Command Response:** <100ms
 - **Memory Usage:** ~30-50MB
-- **File Scanner:** 1000 files/second
+- **Scanner Speed:** 1000 files/second
+- **Language:** 100% Python (cross-platform)
 
 ---
 
@@ -335,15 +317,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with:**
 - Python 3.8+
-- PyInstaller
-- PyQt5
-- Colorama
 - Requests
+- Colorama
+- PyQt5
+- NLTK (NLP capabilities)
 
-**Inspired by:**
-- Professional CLI tools
-- System administration utilities
-- Security analysis frameworks
+**Open Source Technologies:**
+- GitHub API
+- Discord Webhooks
 
 ---
 
@@ -368,8 +349,6 @@ Thanks for checking out EchoShell! If you find it useful, please consider:
 ---
 
 <div align="center">
-
-Made with ❤️ by [ItsAmeo](https://github.com/ItsAmeo)
 
 [⬆ Back to top](#echoshell-)
 
